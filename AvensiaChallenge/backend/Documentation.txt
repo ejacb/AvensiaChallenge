@@ -1,0 +1,19 @@
+In this document I will be explaining my thought process in doing the backend challenge.
+
+Step 1: (Reading and caching the file)
+	- The json file of the products was read by using the File class in the System.IO namespace. 
+	- In caching the file I used Memorycache and set a policy for 1 min before the cache expires. 
+
+Step 2: (Paginating the list of products)
+	- After reading the file, the Skip() and Take() method was used to paginate the products.
+
+Step 3: (Listing all the products grouped in 100 "currency" segments)
+	- For the list to be grouped by 100, I first must get the maximum price of the list of products. In order for me to know at 	which 100 it belongs to. (ex: 150 belongs to the 100-200 range and the maximum number is 200). 
+	-Now in order for me to get the maximum number, I divided first the maximum price by 100 (ex: 1150/100 = 11.5) then used 		the Math.Ceiling functionality to get the next possible whole number (Ex. 11.5 -> 12). 
+	-I then created a List of integers to store the different groups starting from 100 up to 100 multiplied by the maximum 			possible number (E.g. Group 100, 200, 300, ... 1200). 
+	-I then looped around the different products and store which group it belongs to. (Ex. Product 1 with a price of 150 		belongs to the 200 group). 
+	-After that, I created a MinMaxRange object that stores the product detail, the minimum range and maximum range. To get 		the minimum range, I subtracted 100 to the maximum range(E.g. Product 1 with a price of 150 has a minimum range of 100 and 	maximum rangeof 200). 
+
+Step 4: (Conversion of the currency)
+	- I wanted to create an option for the user that lets them convert the current currency to its selected currency code. 
+	- First thing to do is to set a default value for the products, such as setting the USD price as the default value. The 		reason this function is needed is because everytime the user converts a currency, the stored price in cache is the one of 		the new selected currencyCode. So if the user converts from USD -> GBP -> SKK, the multiplicand must be from the default 		price and the multiplier is the exchange rate of the new selected currency. Without this, the multiplicand used is the 		price of the converted currency which is wrong. 
